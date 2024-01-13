@@ -19,9 +19,37 @@ const App: React.FC = () => {
     }
   };
 
+  const removeItem = (itemName: string): void => {
+    setOrder((prevOrder) => prevOrder.filter((item) => item.name !== itemName));
+  };
+
+  const calcTotalPrice = (): number => {
+    return order.reduce((total, item) => {
+      const selectedItem = ITEM.find((i) => i.name === item.name);
+      return total + Number(selectedItem?.price || '0') * item.quantity;
+    }, 0);
+  };
+
   return (
     <div>
       <ItemsList items={ITEM} onAdd={addItem} />
+      <div>
+        <h2>Подробности заказа:</h2>
+        {order.length === 0 ? (
+          <p className='order-text'>Здесь отображается текущий заказ. Сделайте заказ!</p>
+        ) : (
+          <>
+            {order.map((item) => (
+              <div key={item.name}>
+                <span className='order-text'>{item.name} x {item.quantity}</span>
+                <span className='order-text'> {(ITEM.find((i) => i.name === item.name)?.price || '0')} Сом</span>
+                <button className="order-rmv-btn" onClick={() => removeItem(item.name)}>Удалить</button>
+              </div>
+            ))}
+            <p className='total-price'>К оплате: {calcTotalPrice()} Сом</p>
+          </>
+        )}
+      </div>
     </div>
   );
 };
