@@ -1,35 +1,29 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import React, { useState } from 'react';
+import ItemsList from './Components/ItemList.tsx';
+import ITEM from '../src/Components/Item.tsx'
 
-function App() {
-  const [count, setCount] = useState(0)
+const App: React.FC = () => {
+  const [order, setOrder] = useState<{ name: string; quantity: number }[]>([]);
+
+  const addItem = (itemName: string): void => {
+    const existingItemIndex = order.findIndex((item) => item.name === itemName);
+
+    if (existingItemIndex !== -1) {
+      setOrder((prevOrder) => {
+        const newOrder = [...prevOrder];
+        newOrder[existingItemIndex].quantity += 1;
+        return newOrder;
+      });
+    } else {
+      setOrder((prevOrder) => [...prevOrder, { name: itemName, quantity: 1 }]);
+    }
+  };
 
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
-}
+    <div>
+      <ItemsList items={ITEM} onAdd={addItem} />
+    </div>
+  );
+};
 
-export default App
+export default App;
